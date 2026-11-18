@@ -1,0 +1,208 @@
+use vignesh
+CREATE TABLE customerr (
+    customer_id INT PRIMARY KEY,
+    customer_name VARCHAR(100),
+    age INT,
+    city VARCHAR(50)
+)
+
+CREATE TABLE accountss (
+    account_id INT PRIMARY KEY,
+    customer_id INT,
+    account_type VARCHAR(30),
+    balance DECIMAL(12,2),
+    account_status VARCHAR(20),
+    FOREIGN KEY (customer_id)
+    REFERENCES customerr(customer_id)
+)
+
+CREATE TABLE transactionss (
+    transaction_id INT PRIMARY KEY,
+    account_id INT,
+    transaction_date DATETIME,
+    amount DECIMAL(12,2),
+    transaction_type VARCHAR(30),
+    status VARCHAR(20),
+    location VARCHAR(50),
+    receiver_account INT,
+    FOREIGN KEY (account_id)
+    REFERENCES accountss(account_id)
+)
+
+INSERT INTO customerr VALUES
+(1,'Arun Kumar',28,'Chennai'),
+(2,'Priya Sharma',35,'Mumbai'),
+(3,'Rahul Verma',42,'Delhi'),
+(4,'Sneha Reddy',30,'Hyderabad'),
+(5,'Vijay Raj',45,'Bangalore'),
+(6,'Anita Das',26,'Kolkata'),
+(7,'Karthik Rao',38,'Pune'),
+(8,'Meena Iyer',32,'Chennai'),
+(9,'Suresh Patel',51,'Ahmedabad'),
+(10,'Divya Nair',29,'Kochi')
+
+
+INSERT INTO accountss VALUES
+(1001,1,'SAVINGS',150000,'ACTIVE'),
+(1002,2,'SAVINGS',250000,'ACTIVE'),
+(1003,3,'CURRENT',500000,'ACTIVE'),
+(1004,4,'SAVINGS',120000,'ACTIVE'),
+(1005,5,'CURRENT',800000,'ACTIVE'),
+(1006,6,'SAVINGS',90000,'ACTIVE'),
+(1007,7,'SAVINGS',300000,'ACTIVE'),
+(1008,8,'CURRENT',450000,'ACTIVE'),
+(1009,9,'SAVINGS',200000,'ACTIVE'),
+(1010,10,'SAVINGS',175000,'ACTIVE')
+
+INSERT INTO transactionss VALUES
+(5001,1001,'2026-01-01 09:00:00',5000,'TRANSFER','SUCCESS','Chennai',2001),
+(5002,1001,'2026-01-01 09:05:00',4500,'PAYMENT','SUCCESS','Chennai',2002),
+(5003,1001,'2026-01-01 09:10:00',6000,'TRANSFER','SUCCESS','Chennai',2003),
+(5004,1001,'2026-01-01 09:15:00',5500,'WITHDRAWAL','SUCCESS','Chennai',NULL),
+(5005,1001,'2026-01-01 09:20:00',7000,'TRANSFER','SUCCESS','Chennai',2004),
+(5006,1002,'2026-01-01 10:00:00',2500,'PAYMENT','SUCCESS','Mumbai',2005),
+(5007,1002,'2026-01-01 11:00:00',3500,'PAYMENT','SUCCESS','Mumbai',2006),
+(5008,1002,'2026-01-02 12:00:00',200000,'TRANSFER','SUCCESS','Mumbai',2007),
+(5009,1002,'2026-01-02 12:10:00',180000,'TRANSFER','SUCCESS','Delhi',2008),
+(5010,1003,'2026-01-01 08:00:00',10000,'TRANSFER','SUCCESS','Delhi',2009),
+(5011,1003,'2026-01-01 09:00:00',12000,'PAYMENT','FAILED','Delhi',2010),
+(5012,1003,'2026-01-01 09:05:00',15000,'PAYMENT','FAILED','Delhi',2011),
+(5013,1003,'2026-01-01 09:10:00',18000,'TRANSFER','FAILED','Delhi',2012),
+(5014,1003,'2026-01-01 09:15:00',25000,'TRANSFER','SUCCESS','Delhi',2013),
+(5015,1004,'2026-01-01 10:00:00',3000,'PAYMENT','SUCCESS','Hyderabad',2014),
+(5016,1004,'2026-01-01 10:05:00',4500,'PAYMENT','SUCCESS','Hyderabad',2015),
+(5017,1004,'2026-01-01 23:50:00',150000,'TRANSFER','SUCCESS','Singapore',2016),
+(5018,1005,'2026-01-01 11:00:00',5000,'TRANSFER','SUCCESS','Bangalore',2017),
+(5019,1005,'2026-01-02 12:00:00',6000,'TRANSFER','SUCCESS','Bangalore',2018),
+(5020,1005,'2026-01-03 13:00:00',7000,'PAYMENT','SUCCESS','Bangalore',2019),
+(5021,1006,'2026-01-01 01:15:00',175000,'WITHDRAWAL','SUCCESS','Kolkata',NULL),
+(5022,1006,'2026-01-01 01:20:00',125000,'TRANSFER','SUCCESS','Kolkata',2020),
+(5023,1007,'2026-01-01 09:00:00',4000,'PAYMENT','SUCCESS','Pune',2021),
+(5024,1007,'2026-01-01 09:10:00',5000,'PAYMENT','SUCCESS','Pune',2022),
+(5025,1007,'2026-01-01 09:20:00',6000,'PAYMENT','SUCCESS','Pune',2023),
+(5026,1008,'2026-01-01 14:00:00',8000,'TRANSFER','SUCCESS','Chennai',2024),
+(5027,1008,'2026-01-01 14:10:00',9000,'TRANSFER','SUCCESS','Chennai',2025),
+(5028,1008,'2026-01-01 14:20:00',12000,'TRANSFER','SUCCESS','Chennai',2026),
+(5029,1009,'2026-01-01 22:30:00',160000,'TRANSFER','SUCCESS','Ahmedabad',2027),
+(5030,1010,'2026-01-01 12:00:00',4500,'PAYMENT','SUCCESS','Kochi',2028)
+
+
+select c.customer_name,a.account_type,t.transaction_type  from customerr c
+inner join accountss a on c.customer_id = a.customer_id
+inner join transactionss t on a.account_id = t.account_id
+
+1. Display customer name and account balance
+
+select c.customer_name,a.balance from customerr c
+inner join accountss a on c.customer_id = a.customer_id
+
+2. Find customers with failed transactions
+
+select c.customer_name,t.status from customerr c
+inner join accountss a on c.customer_id = a. customer_id 
+inner join transactionss t on a.account_id = t.account_id
+where status = 'failed'
+
+3. Find customers who have made transactions above ₹1,00,000. Display customer name, account ID,
+ transaction ID and amount.
+ 
+select c.customer_name,a.account_id,t.transaction_id,t.amount from customerr c
+inner join accountss a on c.customer_id = a. customer_id 
+inner join transactionss t on a.account_id = t.account_id
+where amount > 100000
+
+4. Find customers who have made more than 5 successful transactions. 
+Display customer name and total transaction count.
+
+select c.customer_name,count(t.transaction_id) 
+as total_transactions from customerr c
+inner join accountss a on c.customer_id = a. customer_id 
+inner join transactionss t on a.account_id = t.account_id
+where t.status = 'success' 
+group by
+c.customer_id,
+c.customer_name
+having count(t.transaction_id)  >= 5 
+
+5.Find customers whose total failed transaction amount exceeds ₹30,000.
+
+select c.customer_name,sum(t.amount)
+as total_transactions from customerr c
+inner join accountss a on c.customer_id = a. customer_id 
+inner join transactionss t on a.account_id = t.account_id
+where t.status ="failed"
+group by 
+c.customer_id,
+c.customer_name
+having sum(t.amount) > 30000
+
+6.Find accounts where total successful withdrawal amount is greater than ₹1,00,000.
+
+select c.customer_name,a.account_id,sum(t.amount)
+as total_amount from customerr c
+inner join accountss a on c.customer_id = a. customer_id 
+inner join transactionss t on a.account_id = t.account_id
+where t.status ="success" and t.transaction_type ='withdrawal'
+group by c.customer_name,
+a.account_id
+having sum(t.amount) > 100000
+
+7.Display customer name, account type, total transaction amount and transaction count.
+ Include only customers whose total transaction amount is above ₹2,00,000.
+ 
+ select c.customer_name,a.account_type,sum(t.amount) as total_amount,
+ count(transaction_id) as total_transaction from customerr c
+inner join accountss a on c.customer_id = a. customer_id 
+inner join transactionss t on a.account_id = t.account_id
+group by c.customer_name,a.account_id 
+having sum(t.amount) > 200000
+
+8.Find customers who do not have any accounts using MySQL JOIN.
+
+select c.customer_name from customerr c
+left join accountss a on c.customer_id = a. customer_id 
+where a.account_id = 'null'
+
+9.Find accounts that have never made any transactions.
+
+select a.account_id,a.customer_id from accountss a
+left join transactionss t on a.account_id = t.account_id
+where t.transaction_id = 'null'
+
+10.Find customers who have accounts but no successful transactions.
+
+select c.customer_name,a.account_id,t.status from customerr c
+inner join accountss a on c.customer_id = a.customer_id
+left join transactionss t on a.account_id = t.account_id and t.status = 'success'
+where t.transaction_id = 'null'
+
+11. Find all accounts and their transaction counts, including accounts with zero transactions.
+
+select a.account_id,a.customer_id,count(t.transaction_id)  from accountss a
+left join transactionss t on a.account_id = t.account_id
+group by a.account_id,a.customer_id
+
+12.Find customers who have never made a failed transaction.
+
+select c.customer_id,c.customer_name,a.account_id from customerr c
+inner join accountss a on c.customer_id = a.customer_id
+left join transactionss t on a.account_id = t.account_id and t.status = 'FAILED'
+where t.transaction_id is null
+
+13.Find transactions where the same account made two transactions.
+
+select a.account_id,a.customer_id,count(t.transaction_id) as total_transactions from accountss a
+left join transactionss t on a.account_id = t.account_id
+group by a.account_id having count(t.transaction_id) > 2
+
+14.Find transactions where the same account transferred the same amount
+ to the same receiver more than once.
+ 
+ select a.account_id,t.receiver_account,t.amount from accountss a
+inner join transactionss t on a.account_id = t.account_id
+ where t.transaction_type ='transfer' and t.status = 'success'
+ group by a.account_id,t.receiver_account,t.amount
+ having count(*) > 1
+ 
+ 
+ 
